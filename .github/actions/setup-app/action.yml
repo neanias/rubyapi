@@ -1,0 +1,38 @@
+name: "Setup App"
+description: "Install dependencies and setup the app"
+inputs:
+  setup-system:
+    required: true
+    default: "false"
+    description: "Install system dependencies"
+  setup-ruby:
+    required: true
+    default: "false"
+    description: "Install Ruby dependencies"
+  setup-node:
+    required: true
+    default: "false"
+    description: "Install Node dependencies"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install System Dependencies
+      if: inputs.setup-system == "true"
+      shell: bash
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get -yqq install chromium-chromedriver
+
+    - name: Install Ruby Dependencies
+      if: inputs.setup-ruby == "true"
+      uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
+
+    - name: Install Node Dependencies
+      if: inputs.setup-node == "true"
+      uses: actions/setup-node@v3
+      with:
+        node-version-file: .node-version
+        cache: "npm"
